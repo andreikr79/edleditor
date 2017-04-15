@@ -1,0 +1,293 @@
+<Mcml xmlns="http://schemas.microsoft.com/2008/mcml"
+      xmlns:a="assembly://edleditor/edleditor"
+      xmlns:cor="assembly://MSCorLib/System"
+      xmlns:coll="assembly://MsCorLib/System.Collections"
+      xmlns:mce="assembly://Microsoft.MediaCenter/Microsoft.MediaCenter.Hosting"                  
+      xmlns:me="Me" >
+
+  <Aggregate Source="resx://edleditor/edleditor.Resources/Controls" />
+  
+  <UI Name="VideoEditor">
+    <Properties>
+      <a:Application Name="Application"
+                     Application="$Required" />
+      <cor:String Name="VideoPath" cor:String="$Required" />
+    </Properties>
+    <Locals>
+      <mce:AddInHost Name="AddInHost" />
+      <Color Name="TextColor" Color="White" />
+      <Font Name="TextFont" Font="Arial,18" />
+      <Command Name="ToStartPosition" Description="Begin" />
+      <Command Name="ToEndPosition" Description="End" />
+      <cor:TimeSpan Name="TimePosition" TimeSpan="0" />
+      <a:SegmentData Name="SegmentCut" />
+      <Image Name="NoFocusImagePause" Source="res://ehres!TWOFOOT.CONTROL.PAUSE.NOFOCUS.PNG" />
+      <Image Name="FocusImagePause" Source="res://ehres!TWOFOOT.CONTROL.PAUSE.FOCUS.PNG" />
+      <Image Name="PressedImagePause" Source="res://ehres!TWOFOOT.CONTROL.PAUSE.PRESSED.PNG"/>
+      <Image Name="NoFocusImagePlay" Source="res://ehres!TWOFOOT.CONTROL.PLAY.NOFOCUS.PNG" />
+      <Image Name="FocusImagePlay" Source="res://ehres!TWOFOOT.CONTROL.PLAY.FOCUS.PNG" />
+      <Image Name="PressedImagePlay" Source="res://ehres!TWOFOOT.CONTROL.PLAY.PRESSED.PNG"/>
+    </Locals>
+    <Rules>
+      <Changed Source="[ToEndPosition.Invoked]">
+        <Actions>
+          <Set Target="[AddInHost.MediaCenterEnvironment.MediaExperience.Transport.Position]"
+               Value="[Application.PlayDuration]"
+               InvokePolicy="Synchronous" />
+        </Actions>
+      </Changed>
+      <Changed Source="[ToStartPosition.Invoked]">
+        <Actions>
+          <Set Target="[AddInHost.MediaCenterEnvironment.MediaExperience.Transport.Position]"
+               Value="[TimePosition]"
+               InvokePolicy="Synchronous" />
+        </Actions>
+      </Changed>
+      <Condition Source="[AddInHost.MediaCenterEnvironment.MediaExperience.Transport.Position]"
+                 ConditionOp="GreaterThan"
+                 SourceValue="[Application.PlayDuration]"
+                 Target="[AddInHost.MediaCenterEnvironment.MediaExperience.Transport.Position]"
+                 Value="[Application.PlayDuration]">
+        <Conditions>
+          <IsValid Source="[AddInHost.MediaCenterEnvironment.MediaExperience.Transport.Position]" />
+          <IsValid Source="[AddInHost.MediaCenterEnvironment.MediaExperience.MediaMetadata!coll:IDictionary.#Duration]" />
+          <Modified Source="[AddInHost.MediaCenterEnvironment.MediaExperience.Transport.Position]" />
+        </Conditions>
+        <Actions>
+          <Set Target="[AddInHost.MediaCenterEnvironment.MediaExperience.Transport.PlayRate]"
+          Value="1" />
+          <Set Target="[AddInHost.MediaCenterEnvironment.MediaExperience.Transport.Position]"
+          Value="[Application.PlayDuration]" />
+        </Actions>
+      </Condition>
+      <Rule>
+        <Conditions>
+          <IsValid Source="[AddInHost.MediaCenterEnvironment.MediaExperience.Transport.Position]" />
+          <Modified Source="[AddInHost.MediaCenterEnvironment.MediaExperience.Transport.Position]" />
+        </Conditions>
+        <Actions>
+          <Set Target="[PlayPosition.Content]"
+               Value="[Application.strPlayPosition]"/>
+        </Actions>
+      </Rule>
+      <Binding Target="[PlayDuration.Content]"
+          Source="[Application.strPlayDuration]">
+        <Conditions>
+          <IsValid Source="[AddInHost.MediaCenterEnvironment.MediaExperience.MediaMetadata!coll:IDictionary.#Duration]"/>
+        </Conditions>
+      </Binding>
+      <Condition Source="[AddInHost.MediaCenterEnvironment.MediaExperience.Transport.PlayState]" SourceValue="Playing" ConditionOp="Equals">
+        <Conditions>
+          <IsValid Source="[AddInHost.MediaCenterEnvironment.MediaExperience.Transport.PlayState]" />
+          <Modified Source="[AddInHost.MediaCenterEnvironment.MediaExperience.Transport.PlayState]" />
+        </Conditions>
+        <Actions>
+          <Set Target="[cmdPause.NoFocusImage]"
+               Value="[NoFocusImagePause]"/>
+          <Set Target="[cmdPause.FocusImage]"
+               Value="[FocusImagePause]"/>
+          <Set Target="[cmdPause.PressedImage]"
+               Value="[PressedImagePause]"/>
+        </Actions>
+      </Condition>
+      <Condition Source="[AddInHost.MediaCenterEnvironment.MediaExperience.Transport.PlayState]" SourceValue="Playing" ConditionOp="NotEquals">
+        <Actions>
+          <Set Target="[cmdPause.NoFocusImage]"
+               Value="[NoFocusImagePlay]"/>
+          <Set Target="[cmdPause.FocusImage]"
+               Value="[FocusImagePlay]"/>
+          <Set Target="[cmdPause.PressedImage]"
+               Value="[PressedImagePlay]"/>
+        </Actions>
+      </Condition>
+    </Rules>
+    <Content>
+      <Panel Layout="Form">
+        <Children>
+          <me:HeaderText Name="Header" Text="EDL Editor Preview Release">
+            <LayoutInput>
+              <FormLayoutInput Right="Parent,1,-30" Top="Parent,0,20" />
+            </LayoutInput>
+          </me:HeaderText>
+          <Panel Layout="VerticalFlow">
+            <LayoutInput>
+              <FormLayoutInput Left="Parent,0"
+                               Top="Header,1,10"
+                                />
+            </LayoutInput>
+            <Children>
+              <Panel Layout="Form">
+                <Children>
+                  <Panel Name="SegmentsZone" Layout="Fill">
+                    <LayoutInput>
+                      <FormLayoutInput Right="Parent,0.3" Bottom="Parent,0.6" />
+                    </LayoutInput>
+                    <Children>
+                      <me:CutBox List="[Application.SegmentsList]" Application="[Application]" />
+                    </Children>
+                  </Panel>
+                  <Panel Name="VideoZone" Layout="Fill">
+                    <LayoutInput>
+                      <FormLayoutInput Left="SegmentsZone,1" Bottom="SegmentsZone,1" />
+                    </LayoutInput>
+                    <Children>                          
+                      <Video />                      
+                    </Children>
+                  </Panel>
+                  <Panel Name="ControlZone" Layout="Fill">
+                    <LayoutInput>
+                      <FormLayoutInput Top="SegmentsZone,1" Right="SegmentsZone,1" Bottom="Parent,1,-30" />
+                    </LayoutInput>
+                    <Children>
+                      <!--Test control zone-->
+                      <Panel Padding="5,5,5,5">
+                        <Layout>
+                          <GridLayout Orientation="Horizontal" Columns="2" Rows="2" MinorAlignment="Center" MajorAlignment="Center"/>
+                        </Layout>
+                        <Children>
+                          <me:SimpleButton Text="Add" Size="130,51">
+                            <Command>
+                              <InvokeCommand Target="[Application.AddNewSegment]" />
+                            </Command>
+                          </me:SimpleButton>
+                          <me:SimpleButton Text="Clear" Size="130,51">
+                            <Command>
+                              <InvokeCommand Target="[Application.ClearSegments]" />
+                            </Command>
+                          </me:SimpleButton>
+                          <me:SimpleButton Text="Save" Size="130,51">
+                            <Command>
+                              <InvokeCommand Target="[Application.SaveEDLFile]" />
+                            </Command>
+                          </me:SimpleButton>
+                          <me:SimpleButton Text="Cancel" Size="130,51">
+                            <Command>
+                              <InvokeCommand Target="[Application.CancelEditing]" />
+                            </Command>
+                          </me:SimpleButton>
+                        </Children>
+                      </Panel>
+                    </Children>
+                  </Panel>
+                  <Panel Name="LineZone1" Layout="Center">
+                    <LayoutInput>
+                      <FormLayoutInput Left="ControlZone,1" Top="VideoZone,1" Bottom="Parent,0.75" />
+                    </LayoutInput>
+                    <Children>
+                      <Panel Layout="VerticalFlow">
+                        <Children>
+                          <Panel Layout="HorizontalFlow">
+                            <Children>
+                              <Text Content="Position: " Color="[TextColor]" Font="[TextFont]" />
+                              <Text Name="PlayPosition" Color="[TextColor]" Font="[TextFont]" />
+                              <Text Content=" Duration: " Color="[TextColor]" Font="[TextFont]" />
+                              <Text Name="PlayDuration" Color="[TextColor]" Font="[TextFont]" />
+                            </Children>
+                          </Panel>
+                          <Panel Layout="HorizontalFlow">
+                            <Children>
+                              <me:SimpleButton Command="[ToStartPosition]" Size="50,51" NoFocusImage="res://ehres!TWOFOOT.CONTROL.PREVIOUS.NOFOCUS.PNG" FocusImage="res://ehres!TWOFOOT.CONTROL.PREVIOUS.FOCUS.PNG" PressedImage="res://ehres!TWOFOOT.CONTROL.PREVIOUS.PRESSED.PNG" />
+                              <me:PlayRateButton PlayRate="8" Size="50,51" NoFocusImage="res://ehres!TWOFOOT.CONTROL.BACKWARD.NOFOCUS.PNG" FocusImage="res://ehres!TWOFOOT.CONTROL.BACKWARD.FOCUS.PNG" PressedImage="res://ehres!TWOFOOT.CONTROL.BACKWARD.PRESSED.PNG" />
+                              <me:PlayRateButton PlayRate="7" Size="50,51" NoFocusImage="res://ehres!TWOFOOT.CONTROL.BACKWARD.NOFOCUS.PNG" FocusImage="res://ehres!TWOFOOT.CONTROL.BACKWARD.FOCUS.PNG" PressedImage="res://ehres!TWOFOOT.CONTROL.BACKWARD.PRESSED.PNG" />
+                              <me:PlayRateButton PlayRate="6" Size="50,51" NoFocusImage="res://ehres!TWOFOOT.CONTROL.BACKWARD.NOFOCUS.PNG" FocusImage="res://ehres!TWOFOOT.CONTROL.BACKWARD.FOCUS.PNG" PressedImage="res://ehres!TWOFOOT.CONTROL.BACKWARD.PRESSED.PNG" />
+                              <me:PlayRateButton PlayRate="0" Size="50,51" NoFocusImage="res://ehres!TWOFOOT.CONTROL.STOP.NOFOCUS.PNG" FocusImage="res://ehres!TWOFOOT.CONTROL.STOP.FOCUS.PNG" PressedImage="res://ehres!TWOFOOT.CONTROL.STOP.PRESSED.PNG" />
+                              <me:PlayRateButton Name="cmdPause"  PlayRate="1" Size="50,51" NoFocusImage="res://ehres!TWOFOOT.CONTROL.PAUSE.NOFOCUS.PNG" FocusImage="res://ehres!TWOFOOT.CONTROL.PAUSE.FOCUS.PNG" PressedImage="res://ehres!TWOFOOT.CONTROL.PAUSE.PRESSED.PNG" />                              
+                              <me:PlayRateButton PlayRate="11" Size="50,51" NoFocusImage="res://ehres!TWOFOOT.CONTROL.FORWARD.NOFOCUS.PNG" FocusImage="res://ehres!TWOFOOT.CONTROL.FORWARD.FOCUS.PNG" PressedImage="res://ehres!TWOFOOT.CONTROL.FORWARD.PRESSED.PNG" />                              
+                              <me:PlayRateButton PlayRate="3" Size="50,51" NoFocusImage="res://ehres!TWOFOOT.CONTROL.FORWARD.NOFOCUS.PNG" FocusImage="res://ehres!TWOFOOT.CONTROL.FORWARD.FOCUS.PNG" PressedImage="res://ehres!TWOFOOT.CONTROL.FORWARD.PRESSED.PNG" />
+                              <me:PlayRateButton PlayRate="4" Size="50,51" NoFocusImage="res://ehres!TWOFOOT.CONTROL.FORWARD.NOFOCUS.PNG" FocusImage="res://ehres!TWOFOOT.CONTROL.FORWARD.FOCUS.PNG" PressedImage="res://ehres!TWOFOOT.CONTROL.FORWARD.PRESSED.PNG" />
+                              <me:PlayRateButton PlayRate="5" Size="50,51" NoFocusImage="res://ehres!TWOFOOT.CONTROL.FORWARD.NOFOCUS.PNG" FocusImage="res://ehres!TWOFOOT.CONTROL.FORWARD.FOCUS.PNG" PressedImage="res://ehres!TWOFOOT.CONTROL.FORWARD.PRESSED.PNG" />
+                              <me:SimpleButton Command="[ToEndPosition]" Size="50,51" NoFocusImage="res://ehres!TWOFOOT.CONTROL.NEXT.NOFOCUS.PNG" FocusImage="res://ehres!TWOFOOT.CONTROL.NEXT.FOCUS.PNG" PressedImage="res://ehres!TWOFOOT.CONTROL.NEXT.PRESSED.PNG" />
+                            </Children>
+                          </Panel>
+                        </Children>
+                      </Panel>                                            
+                    </Children>
+                  </Panel>
+                  <Panel Name="LineZone2" Layout="Center">
+                    <LayoutInput>
+                      <FormLayoutInput Left="ControlZone,1" Top="LineZone1,1" Bottom="Parent,0.95" />
+                    </LayoutInput>
+                    <Children>
+                      <Panel Layout="VerticalFlow">
+                        <Children>
+                          <Panel Layout="HorizontalFlow">
+                            <Children>
+                              <me:SimpleButton Text="-10s" Size="110,51">
+                                <Command>
+                                  <InvokeCommand Target="[Application.ChangePosition]" changepos="-10" timeprefix="s" />
+                                </Command>
+                              </me:SimpleButton>
+                              <me:SimpleButton Text="-1s" Size="110,51">
+                                <Command>
+                                  <InvokeCommand Target="[Application.ChangePosition]" changepos="-1" timeprefix="s" />
+                                </Command>
+                              </me:SimpleButton>
+                              <me:SimpleButton Text="-1ms" Size="110,51">
+                                <Command>
+                                  <InvokeCommand Target="[Application.ChangePosition]" changepos="-100" timeprefix="ms" />
+                                </Command>
+                              </me:SimpleButton>
+                              <me:SimpleButton Text="+1ms" Size="110,51">
+                                <Command>
+                                  <InvokeCommand Target="[Application.ChangePosition]" changepos="100" timeprefix="ms" />
+                                </Command>
+                              </me:SimpleButton>
+                              <me:SimpleButton Text="+1s" Size="110,51">
+                                <Command>
+                                  <InvokeCommand Target="[Application.ChangePosition]" changepos="1" timeprefix="s" />
+                                </Command>
+                              </me:SimpleButton>
+                              <me:SimpleButton Text="+10s" Size="110,51">
+                                <Command>
+                                  <InvokeCommand Target="[Application.ChangePosition]" changepos="10" timeprefix="s" />
+                                </Command>
+                              </me:SimpleButton>
+                            </Children>
+                          </Panel>
+                          <Panel Layout="HorizontalFlow">
+                            <Children>
+                              <me:SimpleButton Text="-30m" Size="110,51">
+                                <Command>
+                                  <InvokeCommand Target="[Application.ChangePosition]" changepos="-30" timeprefix="m" />
+                                </Command>
+                              </me:SimpleButton>
+                              <me:SimpleButton Text="-10m" Size="110,51">
+                                <Command>
+                                  <InvokeCommand Target="[Application.ChangePosition]" changepos="-10" timeprefix="m" />
+                                </Command>
+                              </me:SimpleButton>
+                              <me:SimpleButton Text="-1m" Size="110,51">
+                                <Command>
+                                  <InvokeCommand Target="[Application.ChangePosition]" changepos="-1" timeprefix="m" />
+                                </Command>
+                              </me:SimpleButton>
+                              <me:SimpleButton Text="+1m" Size="110,51">
+                                <Command>
+                                  <InvokeCommand Target="[Application.ChangePosition]" changepos="1" timeprefix="m" />
+                                </Command>
+                              </me:SimpleButton>
+                              <me:SimpleButton Text="+10m" Size="110,51">
+                                <Command>
+                                  <InvokeCommand Target="[Application.ChangePosition]" changepos="10" timeprefix="m" />
+                                </Command>
+                              </me:SimpleButton>
+                              <me:SimpleButton Text="+30m" Size="110,51">
+                                <Command>
+                                  <InvokeCommand Target="[Application.ChangePosition]" changepos="30" timeprefix="m" />
+                                </Command>
+                              </me:SimpleButton>
+                            </Children>
+                          </Panel>
+                        </Children>
+                      </Panel>                      
+                    </Children>
+                  </Panel>
+                </Children>
+              </Panel>
+            </Children>
+          </Panel>
+        </Children>
+      </Panel>
+    </Content>
+  </UI>
+</Mcml>

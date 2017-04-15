@@ -1,0 +1,78 @@
+﻿<Mcml xmlns="http://schemas.microsoft.com/2008/mcml"
+      xmlns:addin="assembly://Microsoft.MediaCenter/Microsoft.MediaCenter.Hosting"
+      xmlns:cor="assembly://MSCorLib/System"
+      xmlns:me="Me">
+
+  <Aggregate Source="resx://edleditor/edleditor.Resources/SimpleButton"/>
+
+  <UI Name="PlayRateButton">
+
+    <Properties>
+      <cor:Single Name="PlayRate" Single="0"/>
+      <cor:String Name="Text" String="" />
+      <!--options-->
+      <cor:Boolean Name="IsNavigatingCommand" Boolean="true"/>
+      <Size Name="Size" Size="250, 51"/>
+
+      <!--fonts-->
+      <Font Name="Font" FontName="Segoe Media Center Semibold" FontSize="20" />
+
+      <!--images-->
+      <Image Name="LabelBackground" Source="res://ehres!Button.Label.Background.png" NineGrid="7, 7, 7, 7"/>
+      <Image Name="LabelBackgroundFocus" Source="res://ehres!Button.Label.Background.Focus.png" NineGrid="7, 7, 7, 7"/>
+      <Image Name="NoFocusImage" Source="res://ehres!Common.Button.NoFocus.Full.png" NineGrid="20,12,20,10"/>
+      <Image Name="FocusImage" Source="res://ehres!Common.Button.Left.Focus.png" NineGrid="20,12,20,10"/>
+      <Image Name="DisabledImage" Source="res://ehres!Common.Button.Disabled.Full.png" NineGrid="20,12,20,10"/>
+      <Image Name="FocusOverlayImage" Source="res://ehres!Common.Button.Left.FocusOverlay.png"/>
+      <Image Name="PressedImage" Source="res://ehres!Common.Button.PressedHighlight.png"/>
+
+      <!--colors-->
+      <Color Name="NoFocusColor" Color="255, 151, 217, 255"/>
+      <Color Name="FocusColor" Color="255, 242, 242, 242"/>
+      <Color Name="DisabledColor" Color="102, 151, 217, 255"/>
+
+      <!--sounds-->
+      <Sound Name="DefaultNavigationSound" Sound="res://ehres!Select_a.wav" />
+      <Sound Name="DefaultNonNavigationSound" Sound="res://ehres!MiniSelect_a.wav" />
+    </Properties>
+
+    <Locals>
+      <addin:AddInHost Name="AddInHost"/>
+      <Command Name="Command" Description="Button Name"/>
+    </Locals>
+
+    <Rules>
+      <Binding Source="[Text]" Target="[Command.Description]"/>
+      <Binding Source="[NoFocusImage]" Target="[RateButton.NoFocusImage]"/>
+      <Binding Source="[FocusImage]" Target="[RateButton.FocusImage]"/>
+      <Binding Source="[PressedImage]" Target="[RateButton.PressedImage]"/>
+      <Changed Source="[Command.Invoked]">
+        <Actions>
+          <Set Target="[AddInHost.MediaCenterEnvironment.MediaExperience.Transport.PlayRate]"
+               Value="[PlayRate]"
+               InvokePolicy="Synchronous"/>
+        </Actions>
+      </Changed>
+    </Rules>
+
+    <Content>
+      <me:SimpleButton Name="RateButton"
+                       Command="[Command]"
+                       Text="[Text]"
+                       IsNavigatingCommand="[IsNavigatingCommand]"
+                       Size="[Size]"
+                       Font="[Font]"
+                       LabelBackground="[LabelBackground]"
+                       LabelBackgroundFocus="[LabelBackgroundFocus]"                       
+                       DisabledImage="[DisabledImage]"
+                       FocusOverlayImage="[FocusOverlayImage]"                       
+                       NoFocusColor="[NoFocusColor]"
+                       FocusColor="[FocusColor]"
+                       DisabledColor="[DisabledColor]"
+                       DefaultNavigationSound="[DefaultNavigationSound]"
+                       DefaultNonNavigationSound="[DefaultNonNavigationSound]"/>
+    </Content>
+
+  </UI>
+
+</Mcml>

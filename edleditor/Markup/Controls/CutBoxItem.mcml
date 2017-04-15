@@ -1,0 +1,96 @@
+﻿<Mcml xmlns="http://schemas.microsoft.com/2008/mcml"
+      xmlns:cor="assembly://MSCorLib/System"
+      xmlns:coll="assembly://MSCorLib/System.Collections"
+      xmlns:mce="assembly://Microsoft.MediaCenter/Microsoft.MediaCenter.Hosting"
+      xmlns:a="assembly://edleditor/edleditor"
+      xmlns:me="Me">
+
+  <Aggregate Source="resx://edleditor/edleditor.Resources/SimpleButton" />
+  
+  <UI Name="CutBoxItem">
+    <Properties>
+      <a:Application Name="Application"
+                     Application="$Required" />      
+      <a:SegmentData Name="Item" SegmentData="$Required" />
+      <a:ListSelection Name="SelectionHolder" ListSelection="$Required" />
+      <Index Name="Index" Index="$Required" />
+    </Properties>
+    <Locals>
+      <mce:AddInHost Name="AddInHost" />
+      <Command Name="cmdSetStart" />
+      <Command Name="cmdSetEnd" />      
+      <InvokeCommand Name="cmdMoveUp" Target="[Application.MoveUpCutListItem]" indx="[Index.Value]" />
+      <InvokeCommand Name="cmdMoveDown" Target="[Application.MoveDownCutListItem]" indx="[Index.Value]" />
+      <InvokeCommand Name="cmdDelItem" Target="[Application.DeleteCutListItem]" indx="[Index.Value]" />
+    </Locals>
+    <Rules>
+      <Default Target="[Input.KeyInteractive]" Value="true" />
+      <Binding Source="[Item.strStartPosition]" Target="[StartCut.Content]" />
+      <Binding Source="[Item.strEndPosition]" Target="[EndCut.Content]" />
+      <Binding Source="[Index.Value]" Target="[IndexCut.Content]">
+        <Transformer>
+          <FormatTransformer Format="{0}"/>
+        </Transformer>
+      </Binding>
+      <Rule>
+        <Conditions>
+          <Modified Source="[cmdSetStart.Invoked]" />
+        </Conditions>
+        <Actions>
+          <Set Target="[Item.StartPosition]"
+               Value="[AddInHost.MediaCenterEnvironment.MediaExperience.Transport.Position]"
+               InvokePolicy="Synchronous" />
+        </Actions>
+      </Rule>
+      <Rule>
+        <Conditions>
+          <Modified Source="[cmdSetEnd.Invoked]" />
+        </Conditions>
+        <Actions>
+          <Set Target="[Item.EndPosition]"
+               Value="[AddInHost.MediaCenterEnvironment.MediaExperience.Transport.Position]"
+               InvokePolicy="Synchronous" />
+        </Actions>
+      </Rule>
+    </Rules>
+    <Content>
+      <Graphic Name="FrameCut"
+                                   Content="image://me:ListboxNoFocus"
+                                   SizingPolicy="SizeToContent"
+                                   MinimumSize="270,160"
+                                   MaximumSize="270,160"
+                                   Padding="5,5,5,5" >
+        <Children>
+          <Panel Layout="VerticalFlow">
+            <Children>
+              <Panel Layout="HorizontalFlow">
+                <Children>
+                  <Text Content="Start: " Color="White"/>
+                  <Text Name="StartCut" Color="White"/>
+                </Children>
+              </Panel>
+              <Panel Layout="HorizontalFlow">
+                <Children>
+                  <Text Content="End: " Color="White"/>
+                  <Text Name="EndCut" Color="White"/>
+                </Children>
+              </Panel>
+              <Panel Layout="HorizontalFlow">
+                <Children>
+                  <me:SimpleButton Command="[cmdSetStart]" Size="50,51" NoFocusImage="res://ehres!TWOFOOT.CONTROL.PREVIOUS.NOFOCUS.PNG" FocusImage="res://ehres!TWOFOOT.CONTROL.PREVIOUS.FOCUS.PNG" PressedImage="res://ehres!TWOFOOT.CONTROL.PREVIOUS.PRESSED.PNG" />
+                  <me:SimpleButton Command="[cmdSetEnd]" Size="50,51" NoFocusImage="res://ehres!TWOFOOT.CONTROL.NEXT.NOFOCUS.PNG" FocusImage="res://ehres!TWOFOOT.CONTROL.NEXT.FOCUS.PNG" PressedImage="res://ehres!TWOFOOT.CONTROL.NEXT.PRESSED.PNG" />
+                  <me:SimpleButton Command="[cmdDelItem]" Size="50,51" NoFocusImage="res://ehres!TWOFOOT.CONTROL.EXIT.NOFOCUS.PNG" FocusImage="res://ehres!TWOFOOT.CONTROL.EXIT.FOCUS.PNG" PressedImage="res://ehres!TWOFOOT.CONTROL.EXIT.PRESSED.PNG" />
+                  <me:SimpleButton Command="[cmdMoveUp]" Size="50,51" NoFocusImage="res://ehres!TWOFOOT.CONTROL.PLUS.NOFOCUS.PNG" FocusImage="res://ehres!TWOFOOT.CONTROL.PLUS.FOCUS.PNG" PressedImage="res://ehres!TWOFOOT.CONTROL.PLUS.PRESSED.PNG" />
+                  <me:SimpleButton Command="[cmdMoveDown]" Size="50,51" NoFocusImage="res://ehres!TWOFOOT.CONTROL.MINUS.NOFOCUS.PNG" FocusImage="res://ehres!TWOFOOT.CONTROL.MINUS.FOCUS.PNG" PressedImage="res://ehres!TWOFOOT.CONTROL.MINUS.PRESSED.PNG" />
+                </Children>
+              </Panel>
+              <Text Name="IndexCut" Font="IndexFont" Color="White"/>
+            </Children>
+          </Panel>
+        </Children>
+      </Graphic>
+    </Content>
+  </UI>
+  <Font Name="IndexFont" FontName="global://me:RegularFontName" FontSize="8" />
+  <Image Name="ListboxNoFocus" Source="resx://edleditor/edleditor.Resources/ListboxNoFocus" />
+</Mcml>

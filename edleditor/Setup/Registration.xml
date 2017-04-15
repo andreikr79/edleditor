@@ -1,0 +1,9 @@
+﻿<application title="edleditor" id="{04b44cf0-ee68-492d-9b16-2f27913112d7}">
+	<entrypoint id="{98ec7be1-d46e-4712-bd2d-608f6cf9debc}"
+				addin="edleditor.MyAddIn, edleditor,Culture=Neutral,Version=0.0.1.0,PublicKeyToken=034ddbf06de48e3e"
+				title="edleditor"
+				description="edleditor Description"
+				ImageUrl=".\Application.png">
+		<category category="More Programs"/>
+	</entrypoint>
+</application>

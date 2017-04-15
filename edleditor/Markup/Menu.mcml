@@ -1,0 +1,47 @@
+<Mcml xmlns="http://schemas.microsoft.com/2008/mcml"
+      xmlns:a="assembly://edleditor/edleditor"
+      xmlns:cor="assembly://MSCorLib/System"
+      xmlns:coll="assembly://MsCorLib/System.Collections"
+      xmlns:mce="assembly://Microsoft.MediaCenter/Microsoft.MediaCenter.Hosting"           
+      xmlns:me="Me" >
+
+  <Aggregate Source="resx://edleditor/edleditor.Resources/Controls" />
+  
+  <UI Name="Menu">
+    <Properties>
+      <a:Application Name="Application"
+                     Application="$Required"/>
+    </Properties>
+    <Locals>
+      <a:WTVRecordsList Name="WTVRecordsList" />
+      <ClickHandler Name="Clicker" />
+    </Locals>
+    <Rules>
+      <Binding Source="[VideoCollectionList.SelectedItem]" Target="[Application.SelectedItem]" />
+    </Rules>
+    <Content>
+      <Panel Layout="Form">
+        <Children>
+          <me:HeaderText Name="Header" Text="EDL Editor Preview Release">
+            <LayoutInput>
+              <FormLayoutInput Right="Parent,1,-30" Top="Parent,0,20" />
+            </LayoutInput>
+          </me:HeaderText>
+          <Panel Layout="VerticalFlow">
+            <LayoutInput>
+              <FormLayoutInput Top="Header,1,80" Left="Parent,0,20" />
+            </LayoutInput>
+            <Children>              
+              <me:SimpleListBox Name="VideoCollectionList" List="[WTVRecordsList]" Size="750,550" >
+                <Command>
+                  <InvokeCommand Target="[Application.FileSelected]" />
+                </Command>
+              </me:SimpleListBox>
+            </Children>
+          </Panel> 
+        </Children>
+      </Panel>
+    </Content>
+  </UI>
+
+</Mcml>

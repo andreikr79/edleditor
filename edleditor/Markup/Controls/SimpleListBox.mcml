@@ -1,0 +1,57 @@
+﻿<Mcml xmlns="http://schemas.microsoft.com/2008/mcml"
+      xmlns:cor="assembly://MSCorLib/System"
+      xmlns:coll="assembly://MSCorLib/System.Collections"
+      xmlns:a="assembly://edleditor/edleditor"
+      xmlns:me="Me">
+  
+  <Aggregate Source="resx://edleditor/edleditor.Resources/Base" />
+  <Aggregate Source="resx://edleditor/edleditor.Resources/ListBoxItem" />
+  
+  <UI Name="SimpleListBox">
+    <Locals>
+      <a:ListSelection Name="Selection" />
+    </Locals>
+    <Properties>      
+      <coll:IList Name="List" IList="$Required" />
+      <ICommand Name="Command" ICommand="$Required" />
+      <cor:Object Name="SelectedItem" Object="null" />
+      <cor:Int32 Name="SelectedIndex" Int32="-1" />
+      <Size Name="Size" Size="561,352" />
+      <Font Name="Font" Font="font://me:Font" />      
+    </Properties>
+    <Rules>
+      <Binding Source="[Selection.Index]" Target="[SelectedIndex]" />
+      <Binding Source="[Selection.Item]" Target="[SelectedItem]" />
+    </Rules>
+    <Content>
+      <Graphic Content="image://me:ListboxNoFocus" 
+               MinimumSize="[Size]"
+               MaximumSize="[Size]"            
+               MouseInteractive="true" 
+               SizingPolicy="SizeToContent"
+               HorizontalAlignment="Fill"
+               VerticalAlignment="Fill">
+        <Children>
+          <Scroller Orientation="Horizontal" FadeSize="10" Padding="15,15,15,15">
+            <Children>
+              <Repeater Source="[List]">
+                <Layout>
+                  <GridLayout Orientation="Vertical" AllowWrap="false" Spacing="0,0" />
+                </Layout>
+                <Content>
+                  <me:ListBoxItem Item="[RepeatedItem]" Font="[Font]" Index="[RepeatedItemIndex]" SelectionHolder="[Selection]">
+                    <Command>
+                      <InvokeCommand Description="[RepeatedItem.ToString]" Target="[Command.Invoke]"/>
+                    </Command>
+                  </me:ListBoxItem>                  
+                </Content>                
+              </Repeater>              
+            </Children>
+          </Scroller>
+        </Children>
+      </Graphic>
+    </Content>
+  </UI>
+  <Font Name="Font" FontName="global://me:RegularFontName" FontSize="20" />
+  <Image Name="ListboxNoFocus" Source="resx://edleditor/edleditor.Resources/ListboxNoFocus" />  
+</Mcml>

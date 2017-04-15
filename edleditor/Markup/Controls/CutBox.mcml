@@ -1,0 +1,42 @@
+<Mcml xmlns="http://schemas.microsoft.com/2008/mcml"
+      xmlns:cor="assembly://MSCorLib/System"
+      xmlns:coll="assembly://MSCorLib/System.Collections"
+      xmlns:a="assembly://edleditor/edleditor"
+      xmlns:me="Me">
+
+  <Aggregate Source="resx://edleditor/edleditor.Resources/Base" />
+  <Aggregate Source="resx://edleditor/edleditor.Resources/CutBoxItem" />
+
+  <UI Name="CutBox">
+    <Locals>
+      <a:ListSelection Name="Selection" />
+    </Locals>
+    <Properties>
+      <a:Application Name="Application"
+                     Application="$Required" />
+      <coll:IList Name="List" IList="$Required" />      
+      <cor:Object Name="SelectedItem" Object="null" />
+      <cor:Int32 Name="SelectedIndex" Int32="-1" />
+    </Properties>
+
+    <Rules>
+      <Binding Source="[Selection.Index]" Target="[SelectedIndex]" />
+      <Binding Source="[Selection.Item]" Target="[SelectedItem]" />
+    </Rules>
+
+    <Content>
+      <Scroller Orientation="Vertical" FadeSize="10" Padding="15,15,15,15">
+        <Children>
+          <Repeater Source="[List]">
+            <Layout>
+              <GridLayout Orientation="Vertical" AllowWrap="false" Spacing="0,0" />
+            </Layout>
+            <Content>
+              <me:CutBoxItem Item="[RepeatedItem!a:SegmentData]" Index="[RepeatedItemIndex]" SelectionHolder="[Selection]" Application="[Application]" />              
+            </Content>
+          </Repeater>
+        </Children>
+      </Scroller>
+    </Content>
+  </UI>
+</Mcml>

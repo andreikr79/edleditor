@@ -1,0 +1,7 @@
+<Mcml xmlns="http://schemas.microsoft.com/2008/mcml">
+	<Aggregate Source="resx://edleditor/edleditor.Resources/HeaderText"/>
+  <Aggregate Source="resx://edleditor/edleditor.Resources/SimpleButton"/>
+  <Aggregate Source="resx://edleditor/edleditor.Resources/SimpleListBox"/>
+  <Aggregate Source="resx://edleditor/edleditor.Resources/PlayRateButton"/>
+  <Aggregate Source="resx://edleditor/edleditor.Resources/CutBox"/>
+</Mcml>
